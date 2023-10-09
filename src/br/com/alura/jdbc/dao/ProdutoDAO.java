@@ -1,6 +1,7 @@
 package br.com.alura.jdbc.dao;
 
 import br.com.alura.jdbc.modelo.Produto;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
