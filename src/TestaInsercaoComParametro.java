@@ -3,23 +3,42 @@ import java.sql.*;
 public class TestaInsercaoComParametro {
 
     public static void main(String[] args) throws SQLException {
-        String nome = "MOUSE";
-        String descricao = "MOUSE SEM FIO";
 
         ConnectionFactory factory = new ConnectionFactory();
-        Connection connection = factory.recuperarConexao();
+        try (Connection connection = factory.recuperarConexao()) {
 
-        PreparedStatement stm =
-                connection.prepareStatement("INSERT INTO PRODUTO(NOME, DESCRICAO) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
-        stm.setString(1, nome);
-        stm.setString(2, descricao);
-        stm.execute();
+            connection.setAutoCommit(false);
 
-        ResultSet rst = stm.getGeneratedKeys();
-        while (rst.next()){
-            Integer id = rst.getInt(1);
-            System.out.println("O id criado foi: " + id);
+            try (PreparedStatement stm =
+                         connection.prepareStatement("INSERT INTO PRODUTO(NOME, DESCRICAO) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
+            ) {
+
+                adicionarVariavel("SMARTTV", "45 POLEGADAS", stm);
+                adicionarVariavel("RADIO", "RADIO A BATERIA", stm);
+                connection.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("ROLLBACK EXECUTADO");
+                connection.rollback();
+            }
         }
     }
+    public static void adicionarVariavel (String nome, String descricao, PreparedStatement stm) throws SQLException {
+        stm.setString(1, nome);
+        stm.setString(2, descricao);
+
+        if (nome.equals("RADIO")) {
+            throw new RuntimeException("Não foi possivel adicionar o produto!");
+        }
+
+        stm.execute();
+        try (ResultSet rst = stm.getGeneratedKeys()) {
+            while (rst.next()) {
+                Integer id = rst.getInt(1);
+                System.out.println("O id criado foi: " + id);
+            }
+        }
+    }
+
 }
 
