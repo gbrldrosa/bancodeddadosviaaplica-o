@@ -1,8 +1,10 @@
 package br.com.alura.jdbc.factory;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class ConnectionFactory {
 
@@ -14,12 +16,15 @@ public class ConnectionFactory {
         comboPooledDataSource.setUser("root");
         comboPooledDataSource.setPassword("root");
 
-        comboPooledDataSource.setMaxPoolSize(15);
-
         this.dataSource = comboPooledDataSource;
     }
 
-    public Connection recuperarConexao() throws SQLException {
+    public Connection recuperarConexao() {
+        try {
             return this.dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
+

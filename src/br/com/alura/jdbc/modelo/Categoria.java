@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Categoria {
 
-    private int id;
+    private Integer id;
     private String nome;
     private List<Produto> produtos = new ArrayList<Produto>();
 
-    public Categoria(int id, String nome) {
+    public Categoria(Integer id, String nome) {
         this.id = id;
         this.nome = nome;
     }
@@ -29,4 +29,10 @@ public class Categoria {
     public List<Produto> getProdutos() {
         return produtos;
     }
+
+    @Override
+    public String toString() {
+        return this.nome;
+    }
 }
+
